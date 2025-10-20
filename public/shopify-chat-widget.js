@@ -162,7 +162,7 @@
       #shopify-chat-widget-toggle { position: fixed; bottom: 18px; right: 18px; background: ${agent.accentColor || '#2563eb'}; color: #fff; border-radius: 50%; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 999998; font-size: 24px; box-shadow: 0 4px 14px rgba(0,0,0,0.18); }
 
       /* Pre-chat form styles */
-      #shopify-chat-prechat { padding: 14px 14px 0; background: #fff; border-top: 1px solid #f1f5f9; display: flex; flex-direction: column; height: 100%; min-height: 0; flex: 1 1 auto; }
+      #shopify-chat-prechat { padding: 14px 14px 92px; background: #fff; border-top: 1px solid #f1f5f9; display: flex; flex-direction: column; height: 100%; min-height: 0; flex: 1 1 auto; }
       #shopify-chat-prechat .row { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
       #shopify-chat-prechat label { font-size: 14px; color: #111827; }
       #shopify-chat-prechat label .req { color: #ef4444; margin-left: 2px; }
@@ -390,7 +390,20 @@
         errorEl.className = 'error';
         const fragment = document.createDocumentFragment();
         const initialValuesLog = {};
-        fields.forEach(f => {
+        // Ensure custom fields appear last, right above the Start chat button
+        const isCustomField = (f) => {
+          const k = String(f.key || '').toLowerCase();
+          const lbl = String(f.label || '').toLowerCase();
+          const t = String(f.type || '').toLowerCase();
+          if (k === 'name' || /\bname\b/.test(lbl)) return false;
+          if (k === 'email' || t === 'email' || /email/.test(lbl)) return false;
+          if (k === 'phone' || t === 'tel' || /phone|tel/.test(lbl)) return false;
+          return true;
+        };
+        const orderedFields = Array.isArray(fields)
+          ? [...fields].sort((a, b) => (isCustomField(a) ? 1 : 0) - (isCustomField(b) ? 1 : 0))
+          : [];
+        orderedFields.forEach(f => {
           const row = document.createElement('div');
           row.className = 'row';
           const label = document.createElement('label');
