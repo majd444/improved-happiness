@@ -398,7 +398,8 @@
           const input = document.createElement('input');
           const itype = (f.type || '').toLowerCase();
           input.type = itype === 'email' ? 'email' : (itype === 'tel' || itype === 'phone' ? 'tel' : 'text');
-          input.placeholder = f.label || f.key;
+          // Do not show the question/label inside the input; keep it empty
+          input.placeholder = '';
           const existingVal = existing && existing[f.key];
           if (existingVal) {
             input.value = existingVal;
