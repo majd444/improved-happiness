@@ -400,13 +400,13 @@
           input.type = itype === 'email' ? 'email' : (itype === 'tel' || itype === 'phone' ? 'tel' : 'text');
           input.placeholder = f.label || f.key;
           const existingVal = existing && existing[f.key];
-          const defaultVal = (f.value != null) ? String(f.value) : '';
           if (existingVal) {
             input.value = existingVal;
             initialValuesLog[f.key] = { source: 'storage', value: existingVal };
-          } else if (defaultVal) {
-            input.value = defaultVal;
-            initialValuesLog[f.key] = { source: 'convex-default', value: defaultVal };
+          } else {
+            // Start empty by default; ignore any provided f.value to avoid pre-filling questions/prompts
+            input.value = '';
+            initialValuesLog[f.key] = { source: 'empty', value: '' };
           }
           inputs[f.key] = input;
           row.appendChild(label);
